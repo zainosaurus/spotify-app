@@ -3,6 +3,7 @@ import requests
 import os
 
 app = Flask(__name__)
+authorization_code = None
 
 @app.route('/')
 def index():
@@ -20,10 +21,19 @@ def launch_spotify_authentication():
 
 @app.route('/spotify_auth_landing/')
 def spotify_auth_landing():
-    print("REACHED LANDING PAGE ---- ")
     if request.args.get('state') == 'dumm':
-        print('CODE --> ' + request.args.get('code'))
-        return render_template('index.html', title='Success', response_content=str(request.args))
+        authorization_code = request.args.get('code')
+
+        # Get refresh and access tokens
+        response = requests.post('https://accounts.spotify.com/api/token', data = {
+            'grant_type': 'authorization_code',
+            'code': authorization_code,
+            'redirect_uri': 'http://localhost:8080/spotify_auth_landing/',
+            'client_id': os.environ['SPOTIFY_CLIENT_ID'],
+            'client_secret': os.environ['SPOTIFY_CLIENT_SECRET']
+        })
+        print("Request completed ----------> response: \n" + str(response))
+        return render_template('index.html', title='Success', response_content=str(response.json()))
     else:
         print('Wrong state!! error; state= ' + request.args.get('state') )
         return render_template('index.html', title='Failure :(', response_content=str(request.args))
