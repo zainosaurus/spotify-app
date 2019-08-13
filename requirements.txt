@@ -1,0 +1,4 @@
+# Python Module dependencies for the app
+
+flask       # For server
+requests    # For sending HTTP requests

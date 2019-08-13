@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  spotify_app:
+    build: .
+    image: spot-test
+    container_name: spotify_app
+    stdin_open: true
+    tty: true
+    ports:
+      - "8080:5000"
+    volumes:
+      - .:/app
+    env_file: secrets.env
+    environment:
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_APP: server.py
+      FLASK_ENV: development

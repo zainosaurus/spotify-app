@@ -1,0 +1,12 @@
+<html>
+    <head>
+        <title>Spotify</title>
+    </head>
+    <body>
+        <h1>{{title}}</h1>
+        <a href="{{ url_for('launch_spotify_authentication') }}">Authenticate</a>
+        <pre>
+            {{response_content}}
+        </pre>
+    </body>
+</html>
