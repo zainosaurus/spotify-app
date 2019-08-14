@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect
+import spotify.authenticator
 import requests
 import os
 
@@ -13,13 +14,11 @@ def index():
 
 @app.route('/launch_spotify_authentication')
 def launch_spotify_authentication():
-    request_string = 'https://accounts.spotify.com/authorize?' +\
-        'client_id=' + os.environ['SPOTIFY_CLIENT_ID'] + \
-        '&response_type=code' + \
-        '&redirect_uri=http://localhost:8080/spotify_auth_landing/' +\
-        '&scope=user-read-private%20user-read-email' +\
-        '&state=dumm'
-    return redirect(request_string)
+    client_id = os.environ['SPOTIFY_CLIENT_ID']
+    redirect_uri = url_for('spotify_auth_landing', _external = True)
+    scope = 'user-read-private user-read-email'
+    state = 'dumm'
+    return redirect(spotify.authenticator.user_login_url(client_id, redirect_uri, scope, state))
 
 @app.route('/spotify_auth_landing/')
 def spotify_auth_landing():
@@ -31,16 +30,12 @@ def spotify_auth_landing():
         authorization_code = request.args.get('code')
 
         # Get refresh and access tokens
-        response = requests.post('https://accounts.spotify.com/api/token', data = {
-            'grant_type': 'authorization_code',
-            'code': authorization_code,
-            'redirect_uri': 'http://localhost:8080/spotify_auth_landing/',
-            'client_id': os.environ['SPOTIFY_CLIENT_ID'],
-            'client_secret': os.environ['SPOTIFY_CLIENT_SECRET']
-        })
-        access_token = response.json().get('access_token')
-        refresh_token = response.json().get('refresh_token')
-        return render_template('index.html', title='Success', response_content=str(response.json()))
+        redirect_uri = url_for('spotify_auth_landing', _external = True)
+        response = spotify.authenticator \
+            .get_access_credentials(authorization_code, redirect_uri, os.environ['SPOTIFY_CLIENT_ID'], os.environ['SPOTIFY_CLIENT_SECRET'])
+        access_token = response.get('access_token')
+        refresh_token = response.get('refresh_token')
+        return render_template('index.html', title='Success', response_content=str(response))
     else:
         print('Wrong state!! error; state= ' + request.args.get('state') )
         return render_template('index.html', title='Failure :(', response_content=str(request.args))
