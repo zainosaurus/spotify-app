@@ -11,7 +11,7 @@ services:
       - "8080:5000"
     volumes:
       - .:/app
-    env_file: secrets.env
+    env_file: secrets/secrets.env
     environment:
       FLASK_RUN_HOST: 0.0.0.0
       FLASK_APP: server.py

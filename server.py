@@ -38,7 +38,6 @@ def spotify_auth_landing():
             'client_id': os.environ['SPOTIFY_CLIENT_ID'],
             'client_secret': os.environ['SPOTIFY_CLIENT_SECRET']
         })
-        print("Request completed ----------> response: \n" + str(response))
         access_token = response.json().get('access_token')
         refresh_token = response.json().get('refresh_token')
         return render_template('index.html', title='Success', response_content=str(response.json()))
@@ -59,7 +58,8 @@ def my_profile():
     '''.format(response.get('display_name'), response.get('country'), response.get('email'))
 
     # render page with updated info
-    print(str(response))
+    #print("Access token is {}".format(access_token))
+    #print(str(response))
     return render_template('index.html', title='My Profile', response_content=info_string)
 
 # Launch App

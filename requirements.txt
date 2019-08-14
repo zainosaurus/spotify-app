@@ -2,3 +2,4 @@
 
 flask       # For server
 requests    # For sending HTTP requests
+google.cloud.firestore  # database
