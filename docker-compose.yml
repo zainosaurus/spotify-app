@@ -14,5 +14,5 @@ services:
     env_file: secrets/secrets.env
     environment:
       FLASK_RUN_HOST: 0.0.0.0
-      FLASK_APP: server.py
+      FLASK_APP: app/server.py
       FLASK_ENV: development
