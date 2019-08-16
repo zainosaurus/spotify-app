@@ -1,4 +1,5 @@
 # Spotify Authentication Module
+
 import requests
 
 # Constants

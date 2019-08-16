@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect
 import spotify.authenticator
+import spotify.api
 import requests
 import os
 
@@ -7,6 +8,12 @@ app = Flask(__name__)
 authorization_code = None
 access_token = None
 refresh_token = None
+
+def dict_to_string(dic):
+    string = ''
+    for key, val in dic.items():
+        string += "{}: {}\n".format(key, val)
+    return string
 
 @app.route('/')
 def index():
@@ -35,7 +42,7 @@ def spotify_auth_landing():
             .get_access_credentials(authorization_code, redirect_uri, os.environ['SPOTIFY_CLIENT_ID'], os.environ['SPOTIFY_CLIENT_SECRET'])
         access_token = response.get('access_token')
         refresh_token = response.get('refresh_token')
-        return render_template('index.html', title='Success', response_content=str(response))
+        return render_template('index.html', title='Success', response_content=dict_to_string(response))
     else:
         print('Wrong state!! error; state= ' + request.args.get('state') )
         return render_template('index.html', title='Failure :(', response_content=str(request.args))
@@ -45,17 +52,9 @@ def my_profile():
     global access_token
 
     # send request to spotify to get current profile information
-    response = requests.get('https://api.spotify.com/v1/me', headers={'Authorization': 'Bearer {}'.format(access_token)}).json()
-    info_string = '''
-        Your name is {}.
-        You live in {}.
-        Your email address is {}.
-    '''.format(response.get('display_name'), response.get('country'), response.get('email'))
+    response = spotify.api.get_current_profile(access_token).json()
 
-    # render page with updated info
-    #print("Access token is {}".format(access_token))
-    #print(str(response))
-    return render_template('index.html', title='My Profile', response_content=info_string)
+    return render_template('index.html', title='My Profile', response_content=dict_to_string(response))
 
 # Launch App
 if __name__ == "__main__":
