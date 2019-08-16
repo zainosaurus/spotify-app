@@ -1,5 +1,6 @@
 import google.cloud.firestore
 import google.cloud.exceptions
+import time
 
 # Class which takes care of transactions to and from the database (Google Cloud Firestore)
 # Represents a Document
@@ -12,8 +13,12 @@ class FirestoreRecord():
     # returns boolean indicating whether the transaction was successful
     def create(self):
         try:
-            doc_snapshot = self.collection.add(self.params, self.id)[1].get()
+            params = self.params
+            params.update({'created_at': time.time()})
+            doc_snapshot = self.collection.add(params, self.id)[1].get()
+            # If the previous line does not raise an error, the transaction was successful
             self.id = doc_snapshot.id
+            self.params = params
             return True
         except google.cloud.exceptions.Conflict:    # Already Exists
             return False
@@ -23,8 +28,12 @@ class FirestoreRecord():
     # Raises error if ID is not set (so it is a new record)
     def update(self):
         try:
-            self.collection.document(self.id).update(self.params)
-            return True     # Update was successful if it reaches here
+            params = self.params
+            params.update({'updated_at': time.time()})
+            self.collection.document(self.id).update(params)
+            # If the previous line does not raise an error, the transaction was successful
+            self.params = params
+            return True
         except google.cloud.exceptions.NotFound:
             return False
 
