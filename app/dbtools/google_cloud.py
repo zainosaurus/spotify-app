@@ -53,15 +53,17 @@ class FirestoreRecord():
         try:
             if self.id:
                 doc = self.collection.document(self.id).get()
+                if doc.exists:
+                    return self.__class__(doc.to_dict(), doc.id)
+                else:
+                    return None
             else:
                 query = self.collection
                 for key, val in self.params.items():
                     query = query.where(str(key), '==', str(val))
                 doc = next(query.stream())
-            return self.__init__(doc.to_dict(), doc.id)
+            return self.__class__(doc.to_dict(), doc.id)
         except StopIteration:
-            return None
-        except google.cloud.exceptions.NotFound:
             return None
 
     # Runs a 'where' query => Same as #find method but returns an iterator

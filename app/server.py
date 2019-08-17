@@ -21,6 +21,11 @@ def successful_request(json_response):
     else:
         return True
 
+# Finds current user based on browser session
+# Returns current User (User) or None if the session hash is empty
+def current_user():
+    return User(id = session['user_id']).find()
+
 @app.route('/')
 def index():
     return render_template('index.html', title='Spotify App')
@@ -67,8 +72,7 @@ def spotify_auth_landing():
 @app.route('/my_profile')
 def my_profile():
     # Find user
-    user = User(id = session['user_id'])
-    user.find()
+    user = current_user()
     if not user:
         return render_template('index.html', title='Failed Again :(', response_content='im hungry. also, session is => {}'.format(session['user_id']))
 
@@ -76,6 +80,10 @@ def my_profile():
     response = spotify.api.get_current_profile(user.get_access_token()).json()
 
     return render_template('index.html', title='My Profile', response_content=dict_to_string(response))
+
+@app.route('/song_info')
+def song_info(song_title):
+
 
 # Launch App
 if __name__ == "__main__":
