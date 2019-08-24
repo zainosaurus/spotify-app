@@ -15,6 +15,10 @@ def construct_request_string(base_url, params):
     string += '&'.join(params_arr)
     return string
 
+# Creates a header hash to send with requests to Spotify API, given an access token
+def create_header(access_token):
+    return {'Authorization': 'Bearer {}'.format(access_token)}
+
 # Provides User with a login page and returns a url to open up user login dialog
 def user_login_url(client_id, redirect_uri, scope, state):
     params = {
