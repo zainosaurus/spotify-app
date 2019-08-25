@@ -37,6 +37,26 @@ def verify_user(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Helper method - filters response json to only include keys of interest
+# In keys_of_interest, keys multiple levels deep can be specified using : (example: key1:key2:...)
+def filter_dict(full_dict, keys_of_interest):
+    filtered_dict = {}
+    for key in keys_of_interest:
+        # Handle keys multiple levels deep
+        nested_keys = key.split(':')
+        key_name = '_'.join(nested_keys)
+        val = full_dict
+        for k in nested_keys:
+            val = val[k]
+        filtered_dict[key_name] = val
+    return filtered_dict
+
+def filter_search_response(track, features):
+    response = {}
+    response.update(filter_dict(track, ['name', 'album:name', 'artists', 'popularity']))
+    response['artists'] = ', '.join(list(map(lambda x: x['name'], response['artists'])))
+    response.update(filter_dict(features, ['danceability', 'energy', 'valence', 'tempo', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'speechiness']))
+    return response
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -95,11 +115,10 @@ def my_profile():
 @app.route('/song_info', methods = ['GET'])
 @verify_user
 def song_info():
-    desired_keys = ['album', 'artists', 'duration_ms', 'id', 'name', 'popularity']
-    response = spotify.api.search(current_user().get_access_token(), request.args.get('search_query'), 'track').json()
-    response_filtered = {key: response['tracks']['items'][0][key] for key in desired_keys}
-    response_filtered['artists'] = ', '.join(list(map(lambda x: x['name'], response_filtered['artists'])))
-    response_filtered['album'] = response_filtered['album']['name']
+    track_info = spotify.api.search(current_user().get_access_token(), request.args.get('search_query'), 'track').json()
+    song_id = track_info['tracks']['items'][0]['id']
+    audio_features = spotify.api.track_audio_features(current_user().get_access_token(), song_id).json()
+    response_filtered = filter_search_response(track_info['tracks']['items'][0], audio_features)
     return render_template('index.html', title = request.args.get('search_query'), response_content = dict_to_string(response_filtered))
 
 # Launch App
