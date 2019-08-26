@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect, session
 from functools import wraps
 import spotify.authenticator
 import spotify.api
+from spotify.objects import Track
 import requests
 import os
 from user import User
@@ -81,7 +82,7 @@ def spotify_auth_landing():
             .get_access_credentials(authorization_code, redirect_uri, os.environ['SPOTIFY_CLIENT_ID'], os.environ['SPOTIFY_CLIENT_SECRET'])
         access_token = response.get('access_token')
         # Get user profile
-        profile_info = spotify.api.get_current_profile(access_token).json()
+        profile_info = spotify.api.get_current_profile(access_token)
         if successful_request(profile_info):
             # Find user in database with this profile info
             user_instance = User({'display_name': profile_info.get('display_name'), 'spotify_id': profile_info.get('id'), 'email': profile_info.get('email')})
@@ -105,7 +106,7 @@ def spotify_auth_landing():
 @verify_user
 def my_profile():
     # send request to spotify to get current profile information
-    response = spotify.api.get_current_profile(current_user().get_access_token()).json()
+    response = spotify.api.get_current_profile(current_user().get_access_token())
 
     return render_template('index.html', title='My Profile', response_content=dict_to_string(response))
 
@@ -115,11 +116,9 @@ def my_profile():
 @app.route('/song_info', methods = ['GET'])
 @verify_user
 def song_info():
-    track_info = spotify.api.search(current_user().get_access_token(), request.args.get('search_query'), 'track').json()
-    song_id = track_info['tracks']['items'][0]['id']
-    audio_features = spotify.api.track_audio_features(current_user().get_access_token(), song_id).json()
-    response_filtered = filter_search_response(track_info['tracks']['items'][0], audio_features)
-    return render_template('index.html', title = request.args.get('search_query'), response_content = dict_to_string(response_filtered))
+    track = Track.find(current_user().get_access_token(), request.args.get('search_query'))
+    track.perform_audio_analysis()
+    return render_template('song_analysis.html', title = request.args.get('search_query'), track_info = track.to_simple_json())
 
 # Launch App
 if __name__ == "__main__":

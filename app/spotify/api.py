@@ -12,7 +12,7 @@ SPOTIFY_BASE_URL = 'https://api.spotify.com/v1'
 # TODO return json instead of response (error handling for error messages)
 def get_current_profile(access_token):
     url = util.build_url([SPOTIFY_BASE_URL, 'me'])
-    return requests.get(url, headers = auth.create_header(access_token))
+    return requests.get(url, headers = auth.create_header(access_token)).json()
 
 # Uses Spotify's Search Endpoint to search for a resource (finds first resource)
 # param: query(string): search query
@@ -20,16 +20,16 @@ def get_current_profile(access_token):
 def search(access_token, query, _type, limit = 1):
     url = util.build_url([SPOTIFY_BASE_URL, 'search'])
     params = dict(q = query, type = _type, limit = limit)
-    return requests.get(url, headers = auth.create_header(access_token), params = params)
+    return requests.get(url, headers = auth.create_header(access_token), params = params).json()
 
 # Gets Audio Analysis information for a Track
 # param: _id(string): Spotify ID for the track
 def track_audio_analysis(access_token, _id):
     url = util.build_url([SPOTIFY_BASE_URL, 'audio-analysis', _id])
-    return requests.get(url, headers = auth.create_header(access_token))
+    return requests.get(url, headers = auth.create_header(access_token)).json()
 
 # Gets Audio Features for a track
 # param: _id (string): Spotify ID for the track
 def track_audio_features(access_token, _id):
     url = util.build_url([SPOTIFY_BASE_URL, 'audio-features', _id])
-    return requests.get(url, headers = auth.create_header(access_token))
+    return requests.get(url, headers = auth.create_header(access_token)).json()
