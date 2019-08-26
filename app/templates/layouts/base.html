@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        {% block head %}
+        <title>{% block title %}Default Page{% endblock %} - Robolist </title>
+        {% endblock head %}
+    </head>
+    <body>
+        {% include 'layouts/navigation.html' %}
+        <h1>{% block page_head %}{{ self.title() }}{% endblock %}</h1>
+        
+        {% block content %}
+        {% endblock content %}
+
+    </body>
+</html>

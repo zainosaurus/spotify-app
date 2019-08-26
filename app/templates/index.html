@@ -1,18 +1,8 @@
-<html>
-    <head>
-        <title>Spotify</title>
-    </head>
-    <body>
-        <h1>{{title}}</h1>
-        <a href="{{ url_for('launch_spotify_authentication') }}">Authenticate</a>
-        <a href="{{ url_for('my_profile') }}">My Profile</a>
-        <form method="GET" id = 'search-form' action = '/song_info'>
-            <label name='search_query'> Search for a song </label>
-            <input type='text' name='search_query'>
-            <input type='submit'>
-        </form>
-        <pre id = 'response-content'>
-        {{response_content}}
-        </pre>
-    </body>
-</html>
+{% extends 'layouts/base.html' %}
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+    <pre id = 'response-content'>
+        {{ response_content }}
+    </pre>
+{% endblock %}
