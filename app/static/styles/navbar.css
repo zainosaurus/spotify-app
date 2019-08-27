@@ -1,0 +1,44 @@
+#navbar {
+    background-color: rgb(30, 215, 96);
+    font-family: 'Nunito', sans-serif;
+    margin: 0 0 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#navbar a {
+    font-weight: bold;
+    color: black;
+    text-decoration: none;
+    margin: 0px 1px 0px 1px;
+    padding: 4px 8px 4px 8px;
+    border-radius: 3px;
+    vertical-align: middle;
+    transition: background-color 0.35s;
+}
+
+#navbar a:hover {
+    background-color: rgb(22, 161, 71);
+}
+
+#navbar a:active {
+    background-color: rgb(19, 139, 62);
+}
+
+#navbar input[type=submit] {
+    background: rgb(22, 161, 71);
+}
+
+#navbar input[type=submit]:hover {
+    background: rgb(19, 139, 62);
+}
+
+#navbar input[type=submit]:active {
+    background: rgb(16, 118, 52);
+}
+
+
+#navbar label {
+    font-size: 0.83em;
+    vertical-align: middle;
+}

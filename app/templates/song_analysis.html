@@ -3,13 +3,18 @@
 {% block title %} Top Search Result for "{{ title }}" {% endblock %}
 {% block head %}
     {{ super() }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js" integrity="sha256-qSIshlknROr4J8GMHRlW3fGKrPki733tLq+qeMCR05Q=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
     <script src="{{ url_for('static', filename = 'js/song_analysis_chart.js') }}"></script>
     <style>
         .inline {
             display: inline-block;
         }
     </style>
+    <script>
+        $(document).ready(function() {
+            createChart({{ data_labels | safe }}, {{ data_values }});
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -22,10 +27,11 @@
     <div id = 'song-stats' class = 'inline'>
         <ul>
             {% for key, val in track_info['audio_features'].items() %}
-            <li><b>{{ key }}</b>: {{ val }}</li>
+                <li><b>{{ key }}</b>: {{ val }}</li>
             {% endfor %}
         </ul>
     </div>
-
-    <canvas id = 'chart' width = '100' height = '50'></canvas>
+    <div id = 'song-chart' style = 'float: right'>
+        <canvas id = 'chart' width = '500' height = '500'></canvas>
+    </div>
 {% endblock %}

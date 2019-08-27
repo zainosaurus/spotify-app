@@ -35,10 +35,18 @@ class Track:
             return True
         return False
         
-
     # Formats and returns important fields
     def to_simple_json(self):
         return self.filter_track_data()
+    
+    # Returns values to plot
+    #   danceability, energy, valence
+    def data_points(self):
+        labels = ['danceability', 'energy', 'valence', 'instrumentalness', 'speechiness', 'acousticness']
+        data = []
+        for label in labels:
+            data.append(self.audio_features[label])
+        return {'labels': labels, 'data': data}
 
 
     def __init__(self, auth_token, track_json, features_json = None):

@@ -1,0 +1,33 @@
+/* Form Elements */
+input[type=text] {
+    margin: 0 5px 0 5px;
+    padding: 2px 4px 2px 4px;
+    border-radius: 2px;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 2px 1px rgb(22, 161, 71);
+    border: 1px;
+    background-color: #EFEFEF;
+    color: #1C1C1C;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.83em;
+}
+
+input[type=submit] {
+    background: rgb(30, 215, 96);
+    padding: 5px 10px 5px 10px;
+    border-width: 0px;
+    border-radius: 2px;
+    font-family: 'Nunito', sans-serif;
+    text-transform: capitalize;
+    transition: background 0.35s;
+}
+
+input[type=submit]:hover {
+    background: rgb(22, 161, 71);
+    cursor: pointer;
+}
+
+input[type=submit]:active {
+    background: rgb(19, 139, 62);
+    cursor: pointer;
+}

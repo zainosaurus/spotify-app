@@ -118,7 +118,13 @@ def my_profile():
 def song_info():
     track = Track.find(current_user().get_access_token(), request.args.get('search_query'))
     track.perform_audio_analysis()
-    return render_template('song_analysis.html', title = request.args.get('search_query'), track_info = track.to_simple_json())
+    return render_template('song_analysis.html', 
+        title = request.args.get('search_query'), 
+        track_info = track.to_simple_json(), 
+        labels = [],
+        data_labels = track.data_points().get('labels'),
+        data_values = track.data_points().get('data')
+    )
 
 # Launch App
 if __name__ == "__main__":

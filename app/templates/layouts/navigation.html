@@ -1,14 +1,14 @@
-<div style='display: inline-block;'>
-    <a href="{{ url_for('launch_spotify_authentication') }}">Authenticate</a>
-    &nbsp&nbsp
-    <a href="{{ url_for('my_profile') }}">My Profile</a>
-    &nbsp&nbsp
-</div>
-
-<div style='float: right;'>
-    <form method="GET" id = 'search-form' action = '/song_info'>
-        <label name='search_query'> Search for a song: </label>
-        <input type='text' name='search_query'>
-        <input type='submit' value='Search'>
-    </form>
+<div id = 'navbar'>
+    <div style='display: inline-block;'>
+        <a href="{{ url_for('launch_spotify_authentication') }}">Authenticate</a>
+        <a href="{{ url_for('my_profile') }}">My Profile</a>
+    </div>
+    
+    <div style='float: right;'>
+        <form method="GET" id = 'search-form' action = '/song_info'>
+            <label name='search_query'> Search for a song: </label>
+            <input type='text' name='search_query'>
+            <input type='submit' value='Search'>
+        </form>
+    </div>
 </div>
