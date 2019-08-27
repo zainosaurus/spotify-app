@@ -20,6 +20,19 @@ class User(FirestoreRecord):
     def get_access_token(self):
         return self.params.get('access_token')
 
+    # Accessor for ID
+    #   Required by flask-login
+    def get_id(self):
+        return self.id
+
     # Constructor
     def __init__(self, params = {}, id = None):
         FirestoreRecord.__init__(self, User.COLLECTION_NAME, params, id)
+        
+        # Following fields are required by flask-login
+        self.is_active = True
+        self.is_anonymous = False
+        if self.exists():
+            self.is_authenticated = True
+        else:
+            self.is_authenticated = False

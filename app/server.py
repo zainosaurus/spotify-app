@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect, session
+import flask_login
+from flask_login import current_user
+from flask_login import login_required
 from functools import wraps
 import spotify.authenticator
 import spotify.api
@@ -11,6 +14,15 @@ import json
 app = Flask(__name__)
 app.secret_key = os.urandom(16)     # for session storage
 
+# Setting up flask-login
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+# User Loader callback for Flask Login
+@login_manager.user_loader
+def load_user(user_id):
+    return User(id = session['user_id']).find()
+
 def dict_to_string(dic):
     return json.dumps(dic, indent = 4)
 
@@ -20,44 +32,6 @@ def successful_request(json_response):
         return False
     else:
         return True
-
-# Finds current user based on browser session
-# Returns current User (User), or None if the session hash is empty
-def current_user():
-    try:
-        return User(id = session['user_id']).find()
-    except KeyError:
-        return None
-
-# Decorator to ensure user has been verified before continuing
-def verify_user(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user() is None:
-            return render_template('index.html', title='Invalid User', response_content='User Session does not exist')
-        return f(*args, **kwargs)
-    return decorated_function
-
-# Helper method - filters response json to only include keys of interest
-# In keys_of_interest, keys multiple levels deep can be specified using : (example: key1:key2:...)
-def filter_dict(full_dict, keys_of_interest):
-    filtered_dict = {}
-    for key in keys_of_interest:
-        # Handle keys multiple levels deep
-        nested_keys = key.split(':')
-        key_name = '_'.join(nested_keys)
-        val = full_dict
-        for k in nested_keys:
-            val = val[k]
-        filtered_dict[key_name] = val
-    return filtered_dict
-
-def filter_search_response(track, features):
-    response = {}
-    response.update(filter_dict(track, ['name', 'album:name', 'artists', 'popularity']))
-    response['artists'] = ', '.join(list(map(lambda x: x['name'], response['artists'])))
-    response.update(filter_dict(features, ['danceability', 'energy', 'valence', 'tempo', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'speechiness']))
-    return response
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -93,8 +67,8 @@ def spotify_auth_landing():
                 user.save()
             # Update the access credentials
             user.save_access_credentials(response)
-            # store user id in session
-            session['user_id'] = user.id
+            # Login User Session
+            flask_login.login_user(user, remember = True)
             return render_template('index.html', title='Success', response_content=dict_to_string(user.params))
         else:
             return render_template('index.html', title='Fail', response_content=dict_to_string(profile_info))
@@ -103,10 +77,10 @@ def spotify_auth_landing():
         return render_template('index.html', title='Failure :(', response_content=str(request.args))
 
 @app.route('/my_profile', methods = ['GET'])
-@verify_user
+@login_required
 def my_profile():
     # send request to spotify to get current profile information
-    response = spotify.api.get_current_profile(current_user().get_access_token())
+    response = spotify.api.get_current_profile(current_user.get_access_token())
 
     return render_template('profile.html', content = response)
 
@@ -114,9 +88,9 @@ def my_profile():
 # required parameters:
 #   search_query(string): string to search for
 @app.route('/song_info', methods = ['GET'])
-@verify_user
+@login_required
 def song_info():
-    track = Track.find(current_user().get_access_token(), request.args.get('search_query'))
+    track = Track.find(current_user.get_access_token(), request.args.get('search_query'))
     track.perform_audio_analysis()
     return render_template('song_analysis.html', 
         title = request.args.get('search_query'), 

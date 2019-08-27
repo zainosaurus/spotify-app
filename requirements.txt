@@ -1,5 +1,6 @@
-# Python Module dependencies for the app
+# Python Module dependencies
 
 flask       # For server
+flask-login # For user session tracking
 requests    # For sending HTTP requests
 google.cloud.firestore  # database

@@ -73,6 +73,10 @@ class FirestoreRecord():
     def delete(self):
         self.collection.document(self.id).delete()
 
+    # Checks if this record exists in the database (note: does not check if record is up-to-date)
+    def exists(self):
+        return self.collection.document(self.id).get().exists
+
     # Constructor
     def __init__(self, collection_name, params = {}, id = None):
         self.collection = FirestoreRecord.CLIENT.collection(collection_name)
