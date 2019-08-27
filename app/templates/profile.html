@@ -1,0 +1,15 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Profile {% endblock %}
+
+{% block content %}
+    <h1> Profile </h1>
+    <div class = 'card inline'>
+        <img src = "{{ content['images'][0]['url'] }}">
+        <hr>
+        <p><b>Display Name: </b> {{ content['display_name'] }}</p>
+        <p><b>Email: </b> {{ content['email'] }}</p>
+        <p><b>Country: </b> {{ content['country'] }}</p>
+        <p><b>Followers: </b> {{ content['followers']['total'] }}</p>
+    </div>
+{% endblock content %}

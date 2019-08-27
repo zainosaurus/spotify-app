@@ -108,7 +108,7 @@ def my_profile():
     # send request to spotify to get current profile information
     response = spotify.api.get_current_profile(current_user().get_access_token())
 
-    return render_template('index.html', title='My Profile', response_content=dict_to_string(response))
+    return render_template('profile.html', content = response)
 
 # Returns song analysis data
 # required parameters:

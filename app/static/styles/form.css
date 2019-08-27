@@ -7,7 +7,7 @@ input[type=text] {
     box-shadow: 2px 2px 2px 1px rgb(22, 161, 71);
     border: 1px;
     background-color: #EFEFEF;
-    color: #1C1C1C;
+    color: #454545;
     font-family: 'Nunito', sans-serif;
     font-size: 0.83em;
 }
@@ -16,7 +16,7 @@ input[type=submit] {
     background: rgb(30, 215, 96);
     padding: 5px 10px 5px 10px;
     border-width: 0px;
-    border-radius: 2px;
+    border-radius: 3px;
     font-family: 'Nunito', sans-serif;
     text-transform: capitalize;
     transition: background 0.35s;

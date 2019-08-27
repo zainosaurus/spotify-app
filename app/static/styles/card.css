@@ -1,0 +1,14 @@
+.card {
+    background-color: rgba(152, 152, 152, 0.2);
+    padding: 10px 30px 10px 30px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    box-shadow: 3px 3px 2px 1px rgba(69, 69, 69, 0.4);
+    font-family: 'Nunito', sans-serif;
+    font-size: small;
+    vertical-align: middle;
+}
+
+.card p {
+    line-height: 75%;
+}

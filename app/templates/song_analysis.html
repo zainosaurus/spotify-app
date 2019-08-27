@@ -1,13 +1,14 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} Top Search Result for "{{ title }}" {% endblock %}
 {% block head %}
     {{ super() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
     <script src="{{ url_for('static', filename = 'js/song_analysis_chart.js') }}"></script>
     <style>
-        .inline {
+        #song-chart {
             display: inline-block;
+            vertical-align: middle;
+            margin-left: 15%;
         }
     </style>
     <script>
@@ -17,21 +18,27 @@
     </script>
 {% endblock %}
 
+{% block title %} {{ title }} {% endblock %}
+
 {% block content %}
-    <div id = 'song-info' class = 'inline'>
-        <p><b>Track: </b> {{ track_info['name'] }}</p>
-        <p><b>Artists: </b> {{ track_info['artists'] }}</p>
-        <p><b>Album: </b> {{ track_info['album_name'] }}</p>
-        <p><b>Popularity: </b> {{ track_info['popularity'] }}</p>
+    <h1> Top Search Result for "{{ title }}" </h1>
+    <div class = 'card inline' style = 'min-width: 25%;'>
+        <div id = 'song-info'>
+            <p><b>Track: </b> {{ track_info['name'] }}</p>
+            <p><b>Artists: </b> {{ track_info['artists'] }}</p>
+            <p><b>Album: </b> {{ track_info['album_name'] }}</p>
+            <p><b>Popularity: </b> {{ track_info['popularity'] }}</p>
+        </div>
+        <hr>
+        <div id = 'song-stats'>
+            <ul>
+                {% for key, val in track_info['audio_features'].items() %}
+                    <li><b>{{ key }}</b>: {{ val }}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-    <div id = 'song-stats' class = 'inline'>
-        <ul>
-            {% for key, val in track_info['audio_features'].items() %}
-                <li><b>{{ key }}</b>: {{ val }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div id = 'song-chart' style = 'float: right'>
-        <canvas id = 'chart' width = '500' height = '500'></canvas>
+    <div id = 'song-chart'>
+        <canvas id = 'chart' width = '400' height = '400'></canvas>
     </div>
 {% endblock %}

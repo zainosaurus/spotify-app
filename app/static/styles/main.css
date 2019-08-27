@@ -11,9 +11,8 @@ body > * {
 
 #page-body {
     font-family: Arial, Helvetica, sans-serif;
-    padding: 10px;
+    padding: 10px 25px 10px 25px;
     margin: 0;
-    /* background-color: #EFEFEF; */
     background-color: #1C1C1C;
     color: #EFEFEF;
     border-radius: 5px;

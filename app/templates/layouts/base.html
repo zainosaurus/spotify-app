@@ -5,18 +5,19 @@
             <title>{% block title %}Default Page{% endblock %} - Robolist </title>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
             <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/layouts.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/form.css') }}">
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/card.css') }}">
         {% endblock head %}
     </head>
     <body>
         {% include 'layouts/navigation.html' %}
         
         <div id = 'page-body'>
-            <h1>{% block page_head %}{{ self.title() }}{% endblock %}</h1>
-            
             {% block content %}
+                <h1>{{ self.title() }}</h1>
             {% endblock content %}
         </div>
     </body>

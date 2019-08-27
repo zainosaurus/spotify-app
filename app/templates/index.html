@@ -1,7 +1,9 @@
 {% extends 'layouts/base.html' %}
+
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
+    <h1> {{ title }} </h1>
     <pre id = 'response-content'>
         {{ response_content }}
     </pre>
