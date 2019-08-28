@@ -7,7 +7,6 @@
 }
 
 #navbar a {
-    font-weight: bold;
     color: black;
     text-decoration: none;
     margin: 0px 1px 0px 1px;
@@ -37,6 +36,15 @@
     background: rgb(16, 118, 52);
 }
 
+#navbar #links-div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#navbar #search-div {
+    float: right;
+    vertical-align: middle;
+}
 
 #navbar label {
     font-size: 0.83em;

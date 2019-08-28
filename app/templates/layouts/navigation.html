@@ -1,10 +1,10 @@
 <div id = 'navbar'>
-    <div style='display: inline-block;'>
+    <div id='links-div'>
         <a href="{{ url_for('launch_spotify_authentication') }}">Authenticate</a>
         <a href="{{ url_for('my_profile') }}">My Profile</a>
     </div>
     
-    <div style='float: right;'>
+    <div id='search-div'>
         <form method="GET" id = 'search-form' action = '/song_info'>
             <label name='search_query'> Search for a song: </label>
             <input type='text' autocomplete='off' name='search_query'>
