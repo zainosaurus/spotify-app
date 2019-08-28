@@ -6,6 +6,7 @@ from functools import wraps
 import spotify.authenticator
 import spotify.api
 from spotify.objects import Track
+import spotify.exceptions
 import requests
 import os
 from user import User
@@ -27,11 +28,28 @@ def dict_to_string(dic):
     return json.dumps(dic, indent = 4)
 
 # Checks if request was successful
+# TODO should be deprecated soon
 def successful_request(json_response):
     if json_response.get('error'):
         return False
     else:
         return True
+
+# Decorator function to catch Spotify API errors and refresh token when necessary
+def auto_refresh_token(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except spotify.exceptions.ExpiredTokenError:
+            response = spotify.authenticator.refresh_access_credentials(
+                current_user.get_refresh_token,
+                os.environ['SPOTIFY_CLIENT_ID'],
+                os.environ['SPOTIFY_CLIENT_SECRET']
+            )
+            current_user.update_access_credentials(response)
+            return func(*args, **kwargs)    # NOTE this is very hacky - depends on user being passed by reference and not by value
+    return decorated_function
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -69,19 +87,26 @@ def spotify_auth_landing():
             user.save_access_credentials(response)
             # Login User Session
             flask_login.login_user(user, remember = True)
-            return render_template('index.html', title='Success', response_content=dict_to_string(user.params))
+            return render_template('index.html',
+                title = 'Success',
+                response_content = dict_to_string(user.params)
+            )
         else:
-            return render_template('index.html', title='Fail', response_content=dict_to_string(profile_info))
+            return render_template('index.html',
+                title = 'Fail',
+                response_content = dict_to_string(profile_info)
+            )
     else:
-        print('Wrong state!! error; state= ' + request.args.get('state') )
-        return render_template('index.html', title='Failure :(', response_content=str(request.args))
+        return render_template('index.html',
+            title = 'Failure :(',
+            response_content = str(request.args)
+        )
 
 @app.route('/my_profile', methods = ['GET'])
 @login_required
+@auto_refresh_token
 def my_profile():
-    # send request to spotify to get current profile information
     response = spotify.api.get_current_profile(current_user.get_access_token())
-
     return render_template('profile.html', content = response)
 
 # Returns song analysis data
@@ -89,11 +114,12 @@ def my_profile():
 #   search_query(string): string to search for
 @app.route('/song_info', methods = ['GET'])
 @login_required
+@auto_refresh_token
 def song_info():
     track = Track.find(current_user.get_access_token(), request.args.get('search_query'))
     track.perform_audio_analysis()
     return render_template('song_analysis.html', 
-        title = request.args.get('search_query'), 
+        title = request.args.get('search_query'),
         track_info = track.to_simple_json(), 
         labels = [],
         data_labels = track.data_points().get('labels'),

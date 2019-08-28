@@ -1,7 +1,7 @@
 # Spotify Authentication Module
 
 import requests
-from spotify import util
+from spotify import utils
 
 # Constants
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
@@ -20,7 +20,7 @@ def user_login_url(client_id, redirect_uri, scope, state):
         'scope': scope,
         'state': state
     }
-    return util.construct_request_string(SPOTIFY_AUTH_URL, params)
+    return utils.construct_request_string(SPOTIFY_AUTH_URL, params)
 
 # Returns access and refresh tokens given an authorization code
 def get_access_credentials(authorization_code, redirect_uri, client_id, client_secret):
@@ -29,6 +29,16 @@ def get_access_credentials(authorization_code, redirect_uri, client_id, client_s
         'code': authorization_code,
         'redirect_uri': redirect_uri,
         'client_id': client_id,
+        'client_secret': client_secret
+    }
+    return requests.post(SPOTIFY_TOKEN_URL, data = params).json()
+
+# Uses refresh token to get new access codes
+def refresh_access_credentials(refresh_token, client_id, client_secret):
+    params = {
+        'grant_type': 'refresh_token',
+        'refresh_token': refresh_token, 
+        'client_id': client_id, 
         'client_secret': client_secret
     }
     return requests.post(SPOTIFY_TOKEN_URL, data = params).json()

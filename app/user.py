@@ -16,9 +16,21 @@ class User(FirestoreRecord):
         })
         self.save()
 
+    # Updates access credentials (when token is refreshed)
+    def update_access_credentials(self, credentials):
+        self.params.update({
+            'access_token': credentials.get('access_token'),
+            'last_refresh_at': time.time()
+        })
+        self.save()
+
     # Gets a valid access token to use
     def get_access_token(self):
         return self.params.get('access_token')
+
+    # Accessor for refresh token
+    def get_refresh_token(self):
+        return self.params.get('refresh_token')
 
     # Accessor for ID
     #   Required by flask-login
