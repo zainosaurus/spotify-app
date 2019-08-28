@@ -1,5 +1,7 @@
 from dbtools.google_cloud import FirestoreRecord
 import time
+import spotify.authenticator    # to refresh token when required
+import os   # [temp] used to access env variables when refreshing token    TODO pass env vars as params
 
 # Class to represent a User - Inherits from FirestoreRecord
 class User(FirestoreRecord):
@@ -12,6 +14,7 @@ class User(FirestoreRecord):
             'access_token': credentials.get('access_token'),
             'refresh_token': credentials.get('refresh_token'),
             'permissions': credentials.get('scope'),
+            'token_valid_for': credentials.get('expires_in'),
             'last_refresh_at': time.time()
         })
         self.save()
@@ -20,17 +23,36 @@ class User(FirestoreRecord):
     def update_access_credentials(self, credentials):
         self.params.update({
             'access_token': credentials.get('access_token'),
+            'token_valid_for': credentials.get('expires_in'),
             'last_refresh_at': time.time()
         })
         self.save()
 
-    # Gets a valid access token to use
-    def get_access_token(self):
-        return self.params.get('access_token')
-
     # Accessor for refresh token
     def get_refresh_token(self):
         return self.params.get('refresh_token')
+    
+    # Sends request to refresh access token when expired
+    def refresh_access_token(self):
+        response = spotify.authenticator.refresh_access_credentials(
+            self.get_refresh_token(),
+            os.environ['SPOTIFY_CLIENT_ID'],
+            os.environ['SPOTIFY_CLIENT_SECRET']
+        )
+        self.update_access_credentials(response)
+
+    # Checks if access token has expired
+    def token_expired(self):
+        current_time = time.time()  # time in seconds
+        time_issued = self.params.get('last_refresh_at')
+        time_valid = self.params.get('token_valid_for')
+        return (current_time - time_issued) > time_valid
+
+    # Gets a valid access token to use
+    def get_access_token(self):
+        if self.token_expired():
+            self.refresh_access_token()
+        return self.params.get('access_token')
 
     # Accessor for ID
     #   Required by flask-login

@@ -4,7 +4,7 @@ import functools
 import spotify.exceptions
 
 # Decorator to raise an error if a response indicates that the access token has expired
-def verify_token_active(func):
+def validate_token(func):
     @functools.wraps(func)
     def decorated_function(*args, **kwargs):
         response = func(*args, **kwargs)

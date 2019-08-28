@@ -1,6 +1,7 @@
 from spotify import api
 from spotify import utils
 
+# Represents a Track Object
 class Track:
 
     RESOURCE_TYPE = 'track'
@@ -53,3 +54,15 @@ class Track:
         self._auth_token = auth_token
         self.track_info = track_json
         self.audio_features = features_json
+
+
+# Represents a Profile Object
+class Profile:
+
+    # Gets user profile associated with auth token
+    def load_profile_info(self):
+        return api.get_current_profile(self._auth_token)
+
+    def __init__(self, auth_token):
+        self._auth_token = auth_token
+        self.profile_info = self.load_profile_info()

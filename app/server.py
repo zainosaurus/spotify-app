@@ -1,11 +1,10 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 import flask_login
-from flask_login import current_user
-from flask_login import login_required
+from flask_login import current_user, login_required
 from functools import wraps
 import spotify.authenticator
 import spotify.api
-from spotify.objects import Track
+from spotify.objects import Track, Profile
 import spotify.exceptions
 import requests
 import os
@@ -35,22 +34,6 @@ def successful_request(json_response):
     else:
         return True
 
-# Decorator function to catch Spotify API errors and refresh token when necessary
-def auto_refresh_token(func):
-    @wraps(func)
-    def decorated_function(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except spotify.exceptions.ExpiredTokenError:
-            response = spotify.authenticator.refresh_access_credentials(
-                current_user.get_refresh_token,
-                os.environ['SPOTIFY_CLIENT_ID'],
-                os.environ['SPOTIFY_CLIENT_SECRET']
-            )
-            current_user.update_access_credentials(response)
-            return func(*args, **kwargs)    # NOTE this is very hacky - depends on user being passed by reference and not by value
-    return decorated_function
-
 @app.route('/', methods = ['GET'])
 def index():
     return render_template('index.html', title='Spotify App')
@@ -60,12 +43,12 @@ def launch_spotify_authentication():
     client_id = os.environ['SPOTIFY_CLIENT_ID']
     redirect_uri = url_for('spotify_auth_landing', _external = True)
     scope = 'user-read-private user-read-email'
-    state = 'dumm'
+    state = 'authenticity_key'
     return redirect(spotify.authenticator.user_login_url(client_id, redirect_uri, scope, state))
 
 @app.route('/spotify_auth_landing/', methods = ['GET'])
 def spotify_auth_landing():
-    if request.args.get('state') == 'dumm':
+    if request.args.get('state') == 'authenticity_key':
         authorization_code = request.args.get('code')
 
         # Get refresh and access tokens
@@ -77,7 +60,11 @@ def spotify_auth_landing():
         profile_info = spotify.api.get_current_profile(access_token)
         if successful_request(profile_info):
             # Find user in database with this profile info
-            user_instance = User({'display_name': profile_info.get('display_name'), 'spotify_id': profile_info.get('id'), 'email': profile_info.get('email')})
+            user_instance = User({
+                'display_name': profile_info.get('display_name'),
+                'spotify_id': profile_info.get('id'),
+                'email': profile_info.get('email')
+            })
             user = user_instance.find()
             # if not found, set as a new user
             if not user:
@@ -104,17 +91,15 @@ def spotify_auth_landing():
 
 @app.route('/my_profile', methods = ['GET'])
 @login_required
-@auto_refresh_token
 def my_profile():
-    response = spotify.api.get_current_profile(current_user.get_access_token())
-    return render_template('profile.html', content = response)
+    profile = Profile(current_user.get_access_token())
+    return render_template('profile.html', content = profile.profile_info)
 
 # Returns song analysis data
 # required parameters:
 #   search_query(string): string to search for
 @app.route('/song_info', methods = ['GET'])
 @login_required
-@auto_refresh_token
 def song_info():
     track = Track.find(current_user.get_access_token(), request.args.get('search_query'))
     track.perform_audio_analysis()
