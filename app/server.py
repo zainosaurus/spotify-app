@@ -95,22 +95,25 @@ def my_profile():
     profile = Profile(current_user.get_access_token())
     return render_template('profile.html', content = profile.profile_info)
 
+# Searches for a song (based on a query) and redirects to song info page
+# required Parameters:
+#   search_query: search query to execute (first hit is returned)
+@app.route('/search', methods=['GET'])
+@login_required
+def song_search():
+    track = Track.find_by_query(current_user.get_access_token(), request.args.get('search_query'))
+    return redirect(url_for('song_info', spotify_id=track.track_info['id']))
+
 # Returns song analysis data
 # required parameters:
-#   search_query(string): string to search for
-@app.route('/track', defaults={'spotify_id': None}, methods=['GET'])
-@app.route('/track/<string:spotify_id>')
+#   spotify_id: Spotify ID of the track to display
+@app.route('/track/<string:spotify_id>', methods=['GET'])
 @login_required
 def song_info(spotify_id):
-    if request.args.get('search_query'):
-        track = Track.find_by_query(current_user.get_access_token(), request.args.get('search_query'))
-        page_title = request.args.get('search_query')
-    else:
-        track = Track.find_by_id(current_user.get_access_token(), spotify_id)
-        page_title = track.to_simple_json()['name']
+    track = Track.find_by_id(current_user.get_access_token(), spotify_id)
     track.perform_audio_analysis()
     return render_template('song_analysis.html', 
-        title = page_title,
+        title = track.track_info['name'],
         track_info = track.to_simple_json(), 
         labels = [],
         data_labels = track.data_points().get('labels'),
