@@ -25,6 +25,13 @@ def search(access_token, query, _type, limit = 1):
     params = dict(q = query, type = _type, limit = limit)
     return requests.get(url, headers = auth.create_header(access_token), params = params).json()
 
+# Retrieves a track by it's Spotify ID
+# param: id(string): Spotify ID of the track
+@validate_token
+def get_track(access_token, _id):
+    url = utils.build_url([SPOTIFY_BASE_URL, 'tracks', _id])
+    return requests.get(url, headers = auth.create_header(access_token)).json()
+
 # Gets Audio Analysis information for a Track
 # param: _id(string): Spotify ID for the track
 @validate_token

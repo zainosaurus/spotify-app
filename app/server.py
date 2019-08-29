@@ -98,13 +98,19 @@ def my_profile():
 # Returns song analysis data
 # required parameters:
 #   search_query(string): string to search for
-@app.route('/song_info', methods = ['GET'])
+@app.route('/track', defaults={'spotify_id': None}, methods=['GET'])
+@app.route('/track/<string:spotify_id>')
 @login_required
-def song_info():
-    track = Track.find(current_user.get_access_token(), request.args.get('search_query'))
+def song_info(spotify_id):
+    if request.args.get('search_query'):
+        track = Track.find_by_query(current_user.get_access_token(), request.args.get('search_query'))
+        page_title = request.args.get('search_query')
+    else:
+        track = Track.find_by_id(current_user.get_access_token(), spotify_id)
+        page_title = track.to_simple_json()['name']
     track.perform_audio_analysis()
     return render_template('song_analysis.html', 
-        title = request.args.get('search_query'),
+        title = page_title,
         track_info = track.to_simple_json(), 
         labels = [],
         data_labels = track.data_points().get('labels'),

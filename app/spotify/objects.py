@@ -7,14 +7,23 @@ class Track:
     RESOURCE_TYPE = 'track'
 
     # List of keys to filter by when getting simple json
-    TRACK_KEYS = ['name', 'album:name', 'artists', 'popularity']
+    TRACK_KEYS = ['name', 'album:name', 'artists', 'popularity', 'id']
     AUDIO_FEATURE_KEYS = ['danceability', 'energy', 'valence', 'tempo', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'speechiness']
 
     @staticmethod
-    def find(auth_token, search_query):
+    def find_by_query(auth_token, search_query):
         track_data = api.search(auth_token, search_query, Track.RESOURCE_TYPE)
         if utils.successful_request(track_data):
+            print(track_data.keys())
             return Track(auth_token, track_data['tracks']['items'][0])
+        else:
+            return None
+    
+    @staticmethod
+    def find_by_id(auth_token, _id):
+        track_data = api.get_track(auth_token, _id)
+        if utils.successful_request(track_data):
+            return Track(auth_token, track_data)
         else:
             return None
     

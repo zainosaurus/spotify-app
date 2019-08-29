@@ -1,5 +1,11 @@
 {% extends 'layouts/base.html' %}
 
+{% block head %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename = 'js/clickable_table_rows.js') }}"></script>
+
+{% endblock %}
+
 {% block title %} My Library {% endblock %}
 
 {% block content %}
@@ -16,8 +22,8 @@
             </thead>
             <tbody>
                 {% for track in saved_tracks %}
-                    <tr>
-                        <td> {{ track.to_simple_json().get('name') }} </td>
+                    <tr class='clickable-row' data-href="{{ url_for('song_info', spotify_id=track.to_simple_json().get('id')) }}">
+                        <td class='song-title'> {{ track.to_simple_json().get('name') }} </td>
                         <td> {{ track.to_simple_json().get('artists') }} </td>
                         <td> {{ track.to_simple_json().get('album_name') }} </td>
                         <td> {{ track.to_simple_json().get('popularity') }} </td>

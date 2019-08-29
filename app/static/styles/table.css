@@ -1,0 +1,36 @@
+table {
+    background-color: rgba(152, 152, 152, 0.1);
+    border-radius: 5px;
+    border-collapse: collapse;
+}
+
+thead {
+    text-align: left;
+    border-bottom: 2px solid rgba(152, 152, 152, 0.3);
+}
+
+thead th {
+    margin-bottom: 12px;
+    font-weight: bold;
+    padding: 10px 10px 5px 10px;
+}
+
+tbody tr {
+    font-family: 'Nunito', sans-serif;
+    font-size: small;
+    font-weight: lighter;
+    transition: background-color 0.35s;
+}
+
+tr .song-title {
+    font-weight: bolder;
+}
+
+tbody tr:hover {
+    background-color: rgba(152, 152, 152, 0.15);
+    cursor: pointer;
+}
+
+tbody td {
+    padding: 10px;
+}

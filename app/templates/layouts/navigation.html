@@ -6,7 +6,7 @@
     </div>
     
     <div id='search-div'>
-        <form method="GET" id = 'search-form' action = '/song_info'>
+        <form method="GET" id='search-form' action="{{ url_for('song_info') }}">
             <label name='search_query'> Search for a song: </label>
             <input type='text' autocomplete='off' name='search_query'>
             <input type='submit' value='Search'>
