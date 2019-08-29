@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from functools import wraps
 import spotify.authenticator
 import spotify.api
-from spotify.objects import Track, Profile
+from spotify.objects import Track, SavedTrack, Profile
 import spotify.exceptions
 import requests
 import os
@@ -42,7 +42,7 @@ def index():
 def launch_spotify_authentication():
     client_id = os.environ['SPOTIFY_CLIENT_ID']
     redirect_uri = url_for('spotify_auth_landing', _external = True)
-    scope = 'user-read-private user-read-email'
+    scope = 'user-read-private user-read-email user-library-read'
     state = 'authenticity_key'
     return redirect(spotify.authenticator.user_login_url(client_id, redirect_uri, scope, state))
 
@@ -89,7 +89,7 @@ def spotify_auth_landing():
             response_content = str(request.args)
         )
 
-@app.route('/my_profile', methods = ['GET'])
+@app.route('/profile', methods = ['GET'])
 @login_required
 def my_profile():
     profile = Profile(current_user.get_access_token())
@@ -110,6 +110,13 @@ def song_info():
         data_labels = track.data_points().get('labels'),
         data_values = track.data_points().get('data')
     )
+
+# Get user's library
+@app.route('/library')
+@login_required
+def my_library():
+    saved_tracks = SavedTrack.get_saved_track_list(current_user.get_access_token())
+    return render_template('library.html', saved_tracks = saved_tracks)
 
 # Launch App
 if __name__ == "__main__":

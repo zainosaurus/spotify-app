@@ -38,3 +38,14 @@ def track_audio_analysis(access_token, _id):
 def track_audio_features(access_token, _id):
     url = utils.build_url([SPOTIFY_BASE_URL, 'audio-features', _id])
     return requests.get(url, headers = auth.create_header(access_token)).json()
+
+# Gets all songs in the user's library
+@validate_token
+def get_saved_tracks(access_token):
+    saved_tracks = []
+    url = utils.build_url([SPOTIFY_BASE_URL, 'me', 'tracks'])
+    while url is not None:
+        track_page = requests.get(url, headers = auth.create_header(access_token), params = dict(limit=50)).json()
+        saved_tracks += track_page['items']
+        url = track_page['next']
+    return {'saved_tracks': saved_tracks}

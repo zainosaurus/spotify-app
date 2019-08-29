@@ -1,0 +1,29 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} My Library {% endblock %}
+
+{% block content %}
+    <h1> My Library </h1>
+    <div class='song-list'>
+        <table>
+            <thead>
+                <tr>
+                    <th> Name </th>
+                    <th> Artist </th>
+                    <th> Album </th>
+                    <th> Popularity </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for track in saved_tracks %}
+                    <tr>
+                        <td> {{ track.to_simple_json().get('name') }} </td>
+                        <td> {{ track.to_simple_json().get('artists') }} </td>
+                        <td> {{ track.to_simple_json().get('album_name') }} </td>
+                        <td> {{ track.to_simple_json().get('popularity') }} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

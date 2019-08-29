@@ -49,7 +49,6 @@ class Track:
             data.append(self.audio_features[label])
         return {'labels': labels, 'data': data}
 
-
     def __init__(self, auth_token, track_json, features_json = None):
         self._auth_token = auth_token
         self.track_info = track_json
@@ -66,3 +65,15 @@ class Profile:
     def __init__(self, auth_token):
         self._auth_token = auth_token
         self.profile_info = self.load_profile_info()
+
+# Represents a Track saved in a user's library
+class SavedTrack(Track):
+
+    @staticmethod
+    def get_saved_track_list(auth_token):
+        track_list = api.get_saved_tracks(auth_token).get('saved_tracks')
+        return list(map(lambda obj: SavedTrack(auth_token, obj), track_list))
+
+    def __init__(self, auth_token, saved_track_json, features_json = None):
+        super().__init__(auth_token, saved_track_json.get('track'), features_json)
+        self.added_at = saved_track_json.get('added_at')
