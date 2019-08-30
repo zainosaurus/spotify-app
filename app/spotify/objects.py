@@ -1,5 +1,6 @@
 from spotify import api
 from spotify import utils
+from spotify import query_builder
 
 # Represents a Track Object
 class Track:
@@ -58,6 +59,14 @@ class Track:
             data.append(self.audio_features[label])
         return {'labels': labels, 'data': data}
 
+    # Gets a value
+    def get_val(self, key):
+        if key in list(self.to_simple_json().keys()):
+            return self.to_simple_json()[key]
+        elif key in self.AUDIO_FEATURE_KEYS:
+            return self.to_simple_json()['audio_features'][key]
+
+
     def __init__(self, auth_token, track_json, features_json = None):
         self._auth_token = auth_token
         self.track_info = track_json
@@ -90,8 +99,24 @@ class Library:
         return list(map(lambda obj: SavedTrack(self._auth_token, obj), track_list))
 
     # Filters the library based on a query (returns list of SavedTracks that match the query)
-    def filter(self, query):
-        pass
+    def filter_by_query(self, query):
+        filtered_tracks = []
+        query_func = query_builder.build_query(query)
+        for track in self.saved_tracks:
+            print('Processing ' + track.to_simple_json()['name'])
+            track.perform_audio_analysis()
+            print('done audio analysis')
+            arg_strings = query_builder.operands(query)
+            arg_vals = []
+            for el in arg_strings:
+                try:
+                    arg_vals.append(float(el))
+                except ValueError:
+                    arg_vals.append(track.get_val(el))
+            if query_func(*arg_vals):
+                print('adding track to playlist')
+                filtered_tracks.append(track)
+        return filtered_tracks
 
     def __init__(self, auth_token):
         self._auth_token = auth_token

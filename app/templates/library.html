@@ -10,6 +10,11 @@
 
 {% block content %}
     <h1> My Library </h1>
+    <form method="GET" id='query-form' action="{{ url_for('filter_library') }}">
+        <label name='query_str'> Filter: </label>
+        <input type='text' autocomplete='off' name='query_str'>
+        <input type='submit' value='Filter'>
+    </form>
     <div class='song-list'>
         <table>
             <thead>

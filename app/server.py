@@ -127,6 +127,14 @@ def my_library():
     library = Library(current_user.get_access_token())
     return render_template('library.html', saved_tracks = library.saved_tracks)
 
+# Filter user's library
+# params: query_str (user-entered query)
+@app.route('/library/filter')
+@login_required
+def filter_library():
+    library = Library(current_user.get_access_token())
+    return render_template('library.html', saved_tracks = library.filter_by_query(request.args.get('query_str')))
+
 # Launch App
 if __name__ == "__main__":
 	try:
