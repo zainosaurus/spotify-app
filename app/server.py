@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from functools import wraps
 import spotify.authenticator
 import spotify.api
-from spotify.objects import Track, SavedTrack, Profile
+from spotify.objects import Track, SavedTrack, Profile, Library
 import spotify.exceptions
 import requests
 import os
@@ -124,8 +124,8 @@ def song_info(spotify_id):
 @app.route('/library')
 @login_required
 def my_library():
-    saved_tracks = SavedTrack.get_saved_track_list(current_user.get_access_token())
-    return render_template('library.html', saved_tracks = saved_tracks)
+    library = Library(current_user.get_access_token())
+    return render_template('library.html', saved_tracks = library.saved_tracks)
 
 # Launch App
 if __name__ == "__main__":
