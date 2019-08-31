@@ -105,7 +105,6 @@ class Library:
         for track in self.saved_tracks:
             print('Processing ' + track.to_simple_json()['name'])
             track.perform_audio_analysis()
-            print('done audio analysis')
             arg_strings = query_builder.operands(query)
             arg_vals = []
             for el in arg_strings:
@@ -114,7 +113,6 @@ class Library:
                 except ValueError:
                     arg_vals.append(track.get_val(el))
             if query_func(*arg_vals):
-                print('adding track to playlist')
                 filtered_tracks.append(track)
         return filtered_tracks
 
