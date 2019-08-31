@@ -4,11 +4,10 @@ from flask_login import current_user, login_required
 from functools import wraps
 import spotify.authenticator
 import spotify.api
-from spotify.objects import Track, SavedTrack, Profile, Library
+from models import User, Track, SavedTrack, Profile, Library
 import spotify.exceptions
 import requests
 import os
-from user import User
 import json
 
 app = Flask(__name__)
@@ -135,9 +134,9 @@ def filter_library():
     library = Library(current_user.get_access_token())
     return render_template('library.html', saved_tracks = library.filter_by_query(request.args.get('query_str')))
 
-# Launch App
-if __name__ == "__main__":
-	try:
-		app.run(host='0.0.0.0', port=8080, debug=True)
-	except:
-		print("Server Crashed :(")
+# # Launch App
+# if __name__ == "__main__":
+# 	try:
+# 		app.run(host='0.0.0.0', port=8080, debug=True)
+# 	except:
+# 		print("Server Crashed :(")
