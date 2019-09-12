@@ -26,14 +26,6 @@ def load_user(user_id):
 def dict_to_string(dic):
     return json.dumps(dic, indent = 4)
 
-# Checks if request was successful
-# TODO should be deprecated soon
-def successful_request(json_response):
-    if json_response.get('error'):
-        return False
-    else:
-        return True
-
 @app.route('/', methods = ['GET'])
 def index():
     return render_template('index.html', title='Spotify App')
@@ -58,42 +50,33 @@ def spotify_auth_landing():
         access_token = response.get('access_token')
         # Get user profile
         profile_info = spotify.api.get_current_profile(access_token)
-        if successful_request(profile_info):
-            # Find user in database with this profile info
-            user_instance = User({
-                'display_name': profile_info.get('display_name'),
-                'spotify_id': profile_info.get('id'),
-                'email': profile_info.get('email')
-            })
-            user = user_instance.find()
-            # if not found, set as a new user
-            if not user:
-                user = user_instance
-                user.save()
-            # Update the access credentials
-            user.save_access_credentials(response)
-            # Login User Session
-            flask_login.login_user(user, remember = True)
-            return render_template('index.html',
-                title = 'Success',
-                response_content = dict_to_string(user.params)
-            )
-        else:
-            return render_template('index.html',
-                title = 'Fail',
-                response_content = dict_to_string(profile_info)
-            )
+        # Find user in database with this profile info
+        user_instance = User({
+            'display_name': profile_info.get('display_name'),
+            'spotify_id': profile_info.get('id'),
+            'email': profile_info.get('email')
+        })
+        user = user_instance.find()
+        # if not found, set as a new user
+        if not user:
+            user = user_instance
+            user.save()
+        # Update the access credentials
+        user.save_access_credentials(response)
+        # Login User Session
+        flask_login.login_user(user, remember = True)
+        return redirect(url_for('my_profile'))
     else:
         return render_template('index.html',
-            title = 'Failure :(',
-            response_content = str(request.args)
-        )
+            title = 'Unauthorized :(',
+            response_content = 'Invalid authenticity key'
+        ), 401
 
 @app.route('/profile', methods = ['GET'])
 @login_required
 def my_profile():
     profile = Profile(current_user.get_access_token())
-    return render_template('profile.html', content = profile.profile_info)
+    return render_template('profile.html', profile=profile)
 
 # Searches for a song (based on a query) and redirects to song info page
 # required Parameters:
