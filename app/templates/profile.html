@@ -4,12 +4,12 @@
 
 {% block content %}
     <h1> Profile </h1>
-    <div class = 'card inline'>
-        <img src = "{{ content['images'][0]['url'] }}">
+    <div class='card inline'>
+        <img width="{{ profile.get_image_width() }}" height="{{ profile.get_image_height() }}" src="{{ profile.get_image_url() }}">
         <hr>
-        <p><b>Display Name: </b> {{ content['display_name'] }}</p>
-        <p><b>Email: </b> {{ content['email'] }}</p>
-        <p><b>Country: </b> {{ content['country'] }}</p>
-        <p><b>Followers: </b> {{ content['followers']['total'] }}</p>
+        <p><b>Display Name: </b> {{ profile.get_name() }}</p>
+        <p><b>Email: </b> {{ profile.get_email() }}</p>
+        <p><b>Country: </b> {{ profile.get_country() }}</p>
+        <p><b>Followers: </b> {{ profile.get_follower_count() }}</p>
     </div>
 {% endblock content %}

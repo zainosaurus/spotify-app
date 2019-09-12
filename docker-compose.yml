@@ -3,8 +3,8 @@ version: '3'
 services:
   spotify_app:
     build: .
-    image: spot-test
-    container_name: spotify_app
+    image: registry.heroku.com/spot-insights/web:staging
+    container_name: spot_insights
     stdin_open: true
     tty: true
     ports:
@@ -16,3 +16,4 @@ services:
       FLASK_RUN_HOST: 0.0.0.0
       FLASK_APP: app/server.py
       FLASK_ENV: development
+      PORT: 5000
