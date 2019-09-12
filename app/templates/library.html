@@ -3,18 +3,32 @@
 {% block head %}
     {{ super() }}
     <script src="{{ url_for('static', filename = 'js/clickable_table_rows.js') }}"></script>
-
+    <style>
+        #title {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        #filter-form {
+            float: right;
+            padding-top: 1.5em;
+            vertical-align: middle;
+        }
+    </style>
 {% endblock %}
 
 {% block title %} My Library {% endblock %}
 
 {% block content %}
-    <h1> My Library </h1>
-    <form method="GET" id='query-form' action="{{ url_for('filter_library') }}">
-        <label name='query_str'> Filter: </label>
-        <input type='text' autocomplete='off' name='query_str'>
-        <input type='submit' value='Filter'>
-    </form>
+    <div id='title'>
+        <h1> My Library </h1>
+    </div>
+    <div id='filter-form'>
+        <form method="GET" id='query-form' action="{{ url_for('filter_library') }}">
+            <label name='query_str'> Filter: </label>
+            <input type='text' autocomplete='off' name='query_str'>
+            <input type='submit' value='Filter'>
+        </form>
+    </div>
     <div class='song-list'>
         <table>
             <thead>
