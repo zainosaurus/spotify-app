@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from functools import wraps
 import spotify.authenticator
 import spotify.api
-from models import User, Track, SavedTrack, Profile, Library
+from models import User, Track, SavedTrack, Profile, TrackCollection
 import spotify.exceptions
 import requests
 import os
@@ -74,7 +74,7 @@ def spotify_auth_landing():
 @app.route('/profile', methods = ['GET'])
 @login_required
 def my_profile():
-    profile = Profile(current_user.get_access_token())
+    profile = current_user.get_profile()
     return render_template('profile.html', profile=profile)
 
 # Searches for a song (based on a query) and redirects to song info page
@@ -106,7 +106,7 @@ def song_info(spotify_id):
 @app.route('/library')
 @login_required
 def my_library():
-    library = Library(current_user.get_access_token())
+    library = current_user.get_library()
     return render_template('library.html', saved_tracks = library.saved_tracks)
 
 # Filter user's library
@@ -114,7 +114,7 @@ def my_library():
 @app.route('/library/filter')
 @login_required
 def filter_library():
-    library = Library(current_user.get_access_token())
+    library = TrackCollection(current_user.get_access_token(), [])
     return render_template('library.html', saved_tracks = library.filter_by_query(request.args.get('query_str')))
 
 # # Launch App

@@ -2,6 +2,7 @@ from dbtools.google_cloud import FirestoreRecord
 import time
 import spotify.authenticator    # to refresh token when required
 import os   # [temp] used to access env variables when refreshing token    TODO pass env vars as params
+from models import TrackCollection, Profile, SavedTrack 
 
 # Class to represent a User - Inherits from FirestoreRecord
 class User(FirestoreRecord):
@@ -58,6 +59,18 @@ class User(FirestoreRecord):
     #   Required by flask-login
     def get_id(self):
         return self.id
+    
+    # Retrieves user's profile
+    #   Returns a Profile Object
+    def get_profile(self):
+        return Profile(self.get_access_token())
+    
+    # Gets User's Library
+    #   Hits Spotify endpoint and returns list of SavedTrack objects
+    def get_library(self):
+        track_list = spotify.api.get_saved_tracks(self.get_access_token()).get('saved_tracks')
+        track_objects = list(map(lambda obj: SavedTrack(self.get_access_token(), obj).perform_audio_analysis(), track_list))
+        return TrackCollection(self.get_access_token(), track_objects)
 
     # Constructor
     def __init__(self, params = {}, id = None):

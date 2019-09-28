@@ -69,12 +69,24 @@ class SavedTrack(Track):
         self.added_at = saved_track_json.get('added_at')
 
 
-class Library:
+class TrackCollection:
     """ Represents a Collection of Tracks (ex. Library or Playlist) """
     # Hits Spotify endpoint and returns list of SavedTrack objects
-    def get_library(self):
-        track_list = spotify.api.get_saved_tracks(self._auth_token).get('saved_tracks')
-        return list(map(lambda obj: SavedTrack(self._auth_token, obj), track_list))
+    # def get_library(self):
+    #     track_list = spotify.api.get_saved_tracks(self._auth_token).get('saved_tracks')
+    #     return list(map(lambda obj: SavedTrack(self._auth_token, obj), track_list))
+
+    # Performs audio analysis for the songs in the collection
+    def perform_audio_analysis(self):
+        for i in range(0, len(self.saved_tracks), 100):
+            # Getting batch of 100 tracks (max batch size for spotify's api)
+            current_batch = self.saved_tracks[i : i+100]
+            # Getting spotify ID's of batch
+            spotify_ids = list(map(lambda x: x['spotify_id'], current_batch))
+            # Sending request to API
+            response_objects = spotify.api.batch_audio_features(self._auth_token, spotify_ids)
+            # Updating track objects with info
+            for i in range(len(response_objects))
 
     # Filters the library based on a query (returns list of SavedTracks that match the query)
     def filter_by_query(self, query):
@@ -94,6 +106,6 @@ class Library:
                 filtered_tracks.append(track)
         return filtered_tracks
 
-    def __init__(self, auth_token):
+    def __init__(self, auth_token, track_list):
         self._auth_token = auth_token
-        self.saved_tracks = self.get_library()
+        self.saved_tracks = track_list
