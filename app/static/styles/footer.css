@@ -1,0 +1,18 @@
+#page-footer {
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    font-size: small;
+    padding: 10px 25px 10px 25px;
+    margin: 0;
+    background-color: #000000;
+    color: #EFEFEF;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+#page-footer a {
+    color: inherit;
+}
+
+#page-footer .links {
+    text-align: center;
+}

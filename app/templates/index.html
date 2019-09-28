@@ -1,10 +1,30 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} {{ title }} {% endblock %}
+{% block title %} Home {% endblock %}
 
 {% block content %}
-    <h1> {{ title }} </h1>
-    <pre id = 'response-content'>
-        {{ response_content }}
-    </pre>
+    <div class='padded-content'>
+        <div class='card welcome'>
+            <h1> Spot-Insights </h1>
+            <div class='note'> <b>Note:</b> Currently Under Development, so not all features may be implemented. </div>
+            <p>
+                Welcome to Spot-Insights! Here, you can connect your Spotify account to view statistics
+                on all your favourite songs. In the future, you will be able to filter your playlists and
+                library using metrics such as danceability, tempo, energy, etc. as well as the usual (artists,
+                genre, etc.)! Please note that this app is still under development and as of yet most of these
+                features don't exist. I'm working on it, though!
+                <br><br>
+                <center>
+                    Please feel free to take a look around.
+                </center>
+            </p>
+            <div>
+                <center>
+                    <form method="GET" action="{{ url_for('launch_spotify_authentication') }}">
+                        <input type='submit' value='Sign In with Spotify' style='font-size: 1em;'>
+                    </form>
+                </center>
+            </div>
+        </div>
+    </div>
 {% endblock %}

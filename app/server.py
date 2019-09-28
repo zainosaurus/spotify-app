@@ -17,6 +17,7 @@ app.secret_key = os.urandom(16)     # for session storage
 # Setting up flask-login
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = '/launch_spotify_authentication'
 
 # User Loader callback for Flask Login
 @login_manager.user_loader
@@ -28,7 +29,7 @@ def dict_to_string(dic):
 
 @app.route('/', methods = ['GET'])
 def index():
-    return render_template('index.html', title='Spotify App')
+    return render_template('index.html')
 
 @app.route('/launch_spotify_authentication', methods = ['GET'])
 def launch_spotify_authentication():
@@ -67,10 +68,7 @@ def spotify_auth_landing():
         flask_login.login_user(user, remember = True)
         return redirect(url_for('my_profile'))
     else:
-        return render_template('index.html',
-            title = 'Unauthorized :(',
-            response_content = 'Invalid authenticity key'
-        ), 401
+        return json.dumps({'error': 'Invalid Authenticity Key'}), 401
 
 @app.route('/profile', methods = ['GET'])
 @login_required

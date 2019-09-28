@@ -2,12 +2,19 @@
 <html lang='en'>
     <head>
         {% block head %}
-            <title>{% block title %}Default Page{% endblock %} - Spot-Insights </title>
+            <title>{% block title %}Home{% endblock %} - Spot-Insights </title>
+            
+            <!-- Online Sources -->
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
             <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Montserrat:400,800&display=swap" rel="stylesheet">
+            <script src="https://kit.fontawesome.com/031aad2b03.js" crossorigin="anonymous"></script>
+            
+            <!-- Local CSS Files -->
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/layout.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/footer.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/form.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/card.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/table.css') }}">
@@ -16,10 +23,14 @@
     <body>
         {% include 'layouts/navigation.html' %}
         
-        <div id = 'page-body'>
+        <main id = 'page-body'>
             {% block content %}
                 <h1>{{ self.title() }}</h1>
             {% endblock content %}
-        </div>
+        </main>
+
+        <footer id='page-footer'>
+            {% include 'layouts/footer.html' %}
+        </footer>
     </body>
 </html>
