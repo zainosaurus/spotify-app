@@ -79,10 +79,10 @@ class TrackCollection:
     # Performs audio analysis for the songs in the collection
     def perform_audio_analysis(self):
         for i in range(0, len(self.saved_tracks), 100):
-            # Getting batch of 100 tracks (max batch size for spotify's api)
+            # Getting batch of 100 tracks (max batch size for spotify api request)
             current_batch = self.saved_tracks[i : i+100]
             # Getting spotify ID's of batch
-            spotify_ids = list(map(lambda x: x['spotify_id'], current_batch))
+            spotify_ids = list(map(lambda x: x.get_val('spotify_id'), current_batch))
             # Sending request to API
             response_objects = spotify.api.batch_audio_features(self._auth_token, spotify_ids)
             # Updating track objects with info

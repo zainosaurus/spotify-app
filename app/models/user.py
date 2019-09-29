@@ -6,11 +6,24 @@ from models import TrackCollection, Profile, SavedTrack
 
 # Class to represent a User - Inherits from FirestoreRecord
 class User(FirestoreRecord):
+    """ Represents a User (Inherits from FirestoreRecord).
+
+    Attributes:
+        COLLECTION_NAME: name of the collection in the database
+    """
+
     # Collection Name
     COLLECTION_NAME = 'users'
 
     # Saves Spotify Authentication Info
     def save_access_credentials(self, credentials):
+        """ Saves Spotify Authentication Info to the database.
+
+        Args:
+            credentials (dict): Dict containing access & refresh token,
+                permissions granted, scope, and seconds till expiry.
+
+        """
         self.params.update({
             'access_token': credentials.get('access_token'),
             'refresh_token': credentials.get('refresh_token'),
