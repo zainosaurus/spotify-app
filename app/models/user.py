@@ -82,7 +82,7 @@ class User(FirestoreRecord):
     #   Hits Spotify endpoint and returns list of SavedTrack objects
     def get_library(self):
         track_list = spotify.api.get_saved_tracks(self.get_access_token()).get('saved_tracks')
-        track_objects = list(map(lambda obj: SavedTrack(self.get_access_token(), obj).perform_audio_analysis(), track_list))
+        track_objects = list(map(lambda obj: SavedTrack(self.get_access_token(), obj), track_list))
         return TrackCollection(self.get_access_token(), track_objects)
 
     # Constructor

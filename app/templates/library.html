@@ -41,7 +41,7 @@
             </thead>
             <tbody>
                 {% for track in saved_tracks %}
-                    <tr class='clickable-row' data-href="{{ url_for('song_info', spotify_id=track.to_simple_json().get('id')) }}">
+                    <tr class='clickable-row' data-href="{{ url_for('song_info', spotify_id=track.to_simple_json().get('id')) }}" data-info="{{ track.to_simple_json() }}">
                         <td class='song-title'> {{ track.to_simple_json().get('name') }} </td>
                         <td> {{ track.to_simple_json().get('artists') }} </td>
                         <td> {{ track.to_simple_json().get('album_name') }} </td>

@@ -105,6 +105,7 @@ def song_info(spotify_id):
 @login_required
 def my_library():
     library = current_user.get_library()
+    library.perform_audio_analysis()
     return render_template('library.html', saved_tracks = library.saved_tracks)
 
 # Filter user's library

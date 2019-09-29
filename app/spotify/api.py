@@ -46,6 +46,14 @@ def track_audio_features(access_token, _id):
     url = utils.build_url(SPOTIFY_BASE_URL, 'audio-features', _id)
     return requests.get(url, headers = auth.create_header(access_token)).json()
 
+# Gets Audio Features for a multiple tracks
+# param: ids (string): Spotify IDs for the track (note that max. 100 at a time is allowed by spotify)
+@validate_token
+def batch_audio_features(access_token, ids):
+    url = utils.build_url(SPOTIFY_BASE_URL, 'audio-features')
+    params = {'ids': ','.join(ids)}
+    return requests.get(url, headers = auth.create_header(access_token), params = params).json()
+
 # Gets all songs in the user's library
 @validate_token
 def get_saved_tracks(access_token):

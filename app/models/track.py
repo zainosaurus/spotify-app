@@ -82,11 +82,12 @@ class TrackCollection:
             # Getting batch of 100 tracks (max batch size for spotify api request)
             current_batch = self.saved_tracks[i : i+100]
             # Getting spotify ID's of batch
-            spotify_ids = list(map(lambda x: x.get_val('spotify_id'), current_batch))
+            spotify_ids = list(map(lambda x: x.get_val('id'), current_batch))
             # Sending request to API
             response_objects = spotify.api.batch_audio_features(self._auth_token, spotify_ids)
             # Updating track objects with info
-            for i in range(len(response_objects))
+            for i in range(len(response_objects['audio_features'])):
+                current_batch[i].audio_features = response_objects['audio_features'][i]
 
     # Filters the library based on a query (returns list of SavedTracks that match the query)
     def filter_by_query(self, query):
