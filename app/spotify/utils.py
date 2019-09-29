@@ -1,6 +1,6 @@
 # Builds URL
-def build_url(path):
-    return '/'.join(path)
+def build_url(*args):
+    return '/'.join(args)
 
 # Constructs a get request string given a dict of params and a base url
 def construct_request_string(base_url, params):
