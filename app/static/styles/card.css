@@ -3,11 +3,22 @@
     padding: 10px 30px 10px 30px;
     border-radius: 5px;
     box-sizing: border-box;
+}
+
+.welcome {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.info {
     font-family: 'Nunito', sans-serif;
     font-size: small;
     vertical-align: middle;
 }
 
-.card p {
+.info p {
     line-height: 75%;
+}
+
+.welcome p {
+    line-height: 150%;
 }

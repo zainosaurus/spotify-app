@@ -10,11 +10,25 @@ body > * {
 }
 
 #page-body {
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 10px 25px 10px 25px;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    padding: 10px 25px 100px 25px;
     margin: 0;
     background-color: #1C1C1C;
     color: #EFEFEF;
     border-radius: 5px;
     flex-grow: 1;
+}
+
+/* Notification Block */
+.note {
+    background-color: #FFED15;
+    font-family: 'Nunito', sans-serif;
+    color: rgb(163, 133, 0);
+    padding: 5px 10px 5px 10px;
+    border-radius: 7px;
+    box-shadow: 2px 2px 2px 1px #1C1C1C;
+}
+
+h1 {
+    font-weight: bold;
 }
