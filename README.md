@@ -11,6 +11,9 @@ Currently, the following tools and frameworks are being used for development. Th
 - Google Cloud Firestore (database)
 - Spotify API
 - Basic HTML/CSS for front-end
+    - jQuery
+    - ChartJS
+    - DataTables
 
 ## Setting up Project
 1.  **Clone the repository**
