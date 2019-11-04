@@ -59,7 +59,7 @@ class Track:
     def __init__(self, auth_token, track_json, features_json = None):
         self._auth_token = auth_token
         self.track_info = track_json
-        self.audio_features = features_json
+        self.audio_features = features_json or track_json.get('audio_features')
 
 
 class SavedTrack(Track):

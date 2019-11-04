@@ -110,10 +110,15 @@ def my_library():
 
 # Filter user's library
 # params: query_str (user-entered query)
-@app.route('/library/filter')
+@app.route('/library/filter', methods=['POST'])
 @login_required
 def filter_library():
-    library = TrackCollection(current_user.get_access_token(), [])
+    print("REACHED BEGINNING OF FUNCTION")
+    dummy_list = [{'name': 'Just My Luck', 'album_name': 'PMD', 'artists': 'Marc E. Bassy, blackbear', 'popularity': 60, 'id': '2QsBAfiNmngcrZsOTznqBG', 'audio_features': {'danceability': 0.616, 'energy': 0.62, 'valence': 0.367, 'tempo': 156.986, 'loudness': -6.398, 'acousticness': 0.231, 'instrumentalness': 7.83e-06, 'liveness': 0.181, 'speechiness': 0.0358}},
+    {'name': 'Rushing Back', 'album_name': 'Rushing Back', 'artists': 'Flume, Vera Blue', 'popularity': 70, 'id': '2zoNNEAyPK2OGDfajardlY', 'audio_features': {'danceability': 0.574, 'energy': 0.612, 'valence': 0.368, 'tempo': 136.046, 'loudness': -4.741, 'acousticness': 0.357, 'instrumentalness': 0, 'liveness': 0.158, 'speechiness': 0.0781}}]
+    #import json; print(json.dumps(request.args, indent=2))
+    #import code; code.interact(local=dict(globals(), **locals()))
+    library = TrackCollection(current_user.get_access_token(), list(map(lambda x: Track(current_user.get_access_token(), x), dummy_list)))
     return render_template('library.html', saved_tracks = library.filter_by_query(request.args.get('query_str')))
 
 # # Launch App

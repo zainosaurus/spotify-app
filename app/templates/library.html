@@ -14,6 +14,19 @@
             vertical-align: middle;
         }
     </style>
+    <script>
+        $(document).ready(function() {
+            alert("Page is Ready;");
+            $('#query-form').submit(function() {
+                alert("Submitting Form; {{ saved_tracks|length }} tracks.");
+                $.ajax({
+                    url: "{{ url_for('filter_library') }}",
+                    data: {'query_str': $('input[name="query_str"]').val()},
+                    type: "POST"
+                });
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block title %} My Library {% endblock %}
@@ -23,10 +36,13 @@
         <h1> My Library </h1>
     </div>
     <div id='filter-form'>
-        <form method="GET" id='query-form' action="{{ url_for('filter_library') }}">
+        <form method="POST" id='query-form' action="">
             <label name='query_str'> Filter: </label>
             <input type='text' autocomplete='off' name='query_str'>
             <input type='submit' value='Filter'>
+            {% for track in saved_tracks %}
+                <input type="hidden" name="tracks[]" value="{{ track.to_simple_json().get('id') }}">
+            {% endfor %}
         </form>
     </div>
     <div class='song-list'>
