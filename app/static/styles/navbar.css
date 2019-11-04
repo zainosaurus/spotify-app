@@ -24,6 +24,10 @@
     background-color: rgb(19, 139, 62);
 }
 
+#navbar input[type=text] {
+    box-shadow: 2px 2px 2px 1px rgb(22, 161, 71);
+}
+
 #navbar input[type=submit] {
     background: rgb(22, 161, 71);
 }

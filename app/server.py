@@ -4,11 +4,10 @@ from flask_login import current_user, login_required
 from functools import wraps
 import spotify.authenticator
 import spotify.api
-from spotify.objects import Track, SavedTrack, Profile
+from models import User, Track, SavedTrack, Profile, TrackCollection
 import spotify.exceptions
 import requests
 import os
-from user import User
 import json
 
 app = Flask(__name__)
@@ -70,10 +69,10 @@ def spotify_auth_landing():
     else:
         return json.dumps({'error': 'Invalid Authenticity Key'}), 401
 
-@app.route('/profile', methods = ['GET'])
+@app.route('/profile', methods=['GET'])
 @login_required
 def my_profile():
-    profile = Profile(current_user.get_access_token())
+    profile = current_user.get_profile()
     return render_template('profile.html', profile=profile)
 
 # Searches for a song (based on a query) and redirects to song info page
@@ -88,7 +87,7 @@ def song_search():
 # Returns song analysis data
 # required parameters:
 #   spotify_id: Spotify ID of the track to display
-@app.route('/track/<string:spotify_id>', methods=['GET'])
+@app.route('/track/<string:spotify_id>', methods = ['GET'])
 @login_required
 def song_info(spotify_id):
     track = Track.find_by_id(current_user.get_access_token(), spotify_id)
@@ -105,12 +104,31 @@ def song_info(spotify_id):
 @app.route('/library')
 @login_required
 def my_library():
-    saved_tracks = SavedTrack.get_saved_track_list(current_user.get_access_token())
-    return render_template('library.html', saved_tracks = saved_tracks)
+    library = current_user.get_library()
+    library.perform_audio_analysis()
+    library_stats = library.mean_vals_chart()
+    return render_template('library.html',
+        saved_tracks = library.saved_tracks,
+        chart_labels = library_stats.get('labels'),
+        chart_data = library_stats.get('data')
+    )
 
-# Launch App
-if __name__ == "__main__":
-	try:
-		app.run(host='0.0.0.0', port=8080, debug=True)
-	except:
-		print("Server Crashed :(")
+# Filter user's library
+# params: query_str (user-entered query)
+@app.route('/library/filter', methods=['POST'])
+@login_required
+def filter_library():
+    print("REACHED BEGINNING OF FUNCTION")
+    dummy_list = [{'name': 'Just My Luck', 'album_name': 'PMD', 'artists': 'Marc E. Bassy, blackbear', 'popularity': 60, 'id': '2QsBAfiNmngcrZsOTznqBG', 'audio_features': {'danceability': 0.616, 'energy': 0.62, 'valence': 0.367, 'tempo': 156.986, 'loudness': -6.398, 'acousticness': 0.231, 'instrumentalness': 7.83e-06, 'liveness': 0.181, 'speechiness': 0.0358}},
+    {'name': 'Rushing Back', 'album_name': 'Rushing Back', 'artists': 'Flume, Vera Blue', 'popularity': 70, 'id': '2zoNNEAyPK2OGDfajardlY', 'audio_features': {'danceability': 0.574, 'energy': 0.612, 'valence': 0.368, 'tempo': 136.046, 'loudness': -4.741, 'acousticness': 0.357, 'instrumentalness': 0, 'liveness': 0.158, 'speechiness': 0.0781}}]
+    #import json; print(json.dumps(request.args, indent=2))
+    #import code; code.interact(local=dict(globals(), **locals()))
+    library = TrackCollection(current_user.get_access_token(), list(map(lambda x: Track(current_user.get_access_token(), x), dummy_list)))
+    return render_template('library.html', saved_tracks = library.filter_by_query(request.args.get('query_str')))
+
+# # Launch App
+# if __name__ == "__main__":
+# 	try:
+# 		app.run(host='0.0.0.0', port=8080, debug=True)
+# 	except:
+# 		print("Server Crashed :(")

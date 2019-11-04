@@ -12,3 +12,47 @@
     width: 30px;
     display: inline-block;
 }
+
+/* Following Definitions are for sizing (horizontally). 2% padding on each 
+   side is expected, leaving 96% of the page width for content */
+
+.col {
+    display: inline-block;
+    vertical-align: top;
+}
+.s-1 {
+    width: 8%;
+}
+.s-2 {
+    width: 16%;
+}
+.s-3 {
+    width: 24%
+}
+.s-4 {
+    width: 32%
+}
+.s-5 {
+    width: 40%
+}
+.s-6 {
+    width: 48%
+}
+.s-7 {
+    width: 56%
+}
+.s-8 {
+    width: 64%
+}
+.s-9 {
+    width: 72%
+}
+.s-10 {
+    width: 80%
+}
+.s-11 {
+    width: 88%
+}
+.s-12 {
+    width: 96%
+}

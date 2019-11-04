@@ -1,0 +1,56 @@
+/* Custom Styles for components of Datatables */
+
+/* Pagination */
+.pagination {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.pagination .paginate_button {
+    margin: 3px;
+    padding: 2px 5px;
+    /* border: 1px solid #efefef; */
+    border-radius: 3px;
+    font-size: small;
+    background-color: rgba(152, 152, 152, 0.2);
+    color: #efefef;
+}
+
+.pagination .paginate_button:not(.disabled):hover {
+    cursor: pointer;
+}
+
+.pagination .current {
+    background-color: #efefef;
+    color: #1c1c1c;
+}
+
+.pagination .next:not(.disabled),
+.pagination .previous:not(.disabled) {
+    background-color: rgb(30, 215, 96);
+    color: #1c1c1c;
+}
+
+
+/* Search Box */
+.dataTables_filter {
+    display: inline-block;
+    font-size: small;
+    margin-bottom: 5px;
+}
+
+.dataTables_filter > * {
+    margin-right: 10px;
+}
+
+/* Table Info */
+.dataTables_info {
+    font-size: small;
+    float: right;
+    margin-bottom:5px;
+}
+
+/* Header Columns (Sortable) */
+.sorting:hover, .sorting_asc:hover, .sorting_desc:hover {
+    cursor: pointer;
+}

@@ -11,13 +11,6 @@ def construct_request_string(base_url, params):
     string += '&'.join(params_arr)
     return string
 
-# Checks for error status codes
-def successful_request(request_json):
-    if request_json.get('error'):
-        return False
-    else:
-        return True
-
 # Helper method - filters response json to only include keys of interest
 # In keys_of_interest, keys multiple levels deep can be specified using : (example: key1:key2:...)
 def filter_dict(full_dict, keys_of_interest):
