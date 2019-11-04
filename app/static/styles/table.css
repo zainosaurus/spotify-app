@@ -1,6 +1,4 @@
 table {
-    background-color: rgba(152, 152, 152, 0.1);
-    border-radius: 5px;
     border-collapse: collapse;
 }
 
@@ -20,10 +18,7 @@ tbody tr {
     font-size: small;
     font-weight: lighter;
     transition: background-color 0.35s;
-}
-
-tr .song-title {
-    font-weight: bolder;
+    border-bottom: 1px solid rgba(152, 152, 152, 0.1);
 }
 
 tbody tr:hover {
@@ -33,4 +28,21 @@ tbody tr:hover {
 
 tbody td {
     padding: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Individual widths for each column */
+tbody .track-title {
+    max-width: 300px;
+}
+tbody .track-artists {
+    max-width: 250px;
+}
+tbody .track-album {
+    max-width: 200px;
+}
+tbody .track-popularity {
+    max-width: 20px;
 }

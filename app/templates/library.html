@@ -5,10 +5,12 @@
     <script src="{{ url_for('static', filename = 'js/clickable_table_rows.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
     <script src="{{ url_for('static', filename = 'js/song_analysis_chart.js') }}"></script>
+    <script src="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css"></script>
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
     <style>
         #title {
             display: block;
-            vertical-align: middle;
         }
         #filter-form {
             float: right;
@@ -25,7 +27,15 @@
     </style>
     <script>
         $(document).ready(function() {
-            createChart({{ chart_data['labels'] | safe }}, {{ chart_data['data'] }});
+            createChart({{ chart_labels | safe }}, {{ chart_data }});
+            $("#song-table").DataTable({
+                "dom": 'fi<t><"pagination"p>',
+                "language": {
+                    "info": "_START_ - _END_  of _TOTAL_ songs",
+                    "search": "Search: &nbsp"
+                },
+                "pageLength": 25
+            });
         });
     </script>
 {% endblock %}
@@ -38,22 +48,22 @@
             <h1> My Library </h1>
         </div>
         <div id='song-list'>
-            <table>
+            <table id="song-table">
                 <thead>
                     <tr>
                         <th> Name </th>
                         <th> Artist </th>
                         <th> Album </th>
-                        <th> Popularity </th>
+                        <th><span class="fas fa-chart-line"></span></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for track in saved_tracks %}
                         <tr class='clickable-row' data-href="{{ url_for('song_info', spotify_id=track.to_simple_json().get('id')) }}" data-info="{{ track.to_simple_json() }}">
-                            <td class='song-title'> {{ track.to_simple_json().get('name') }} </td>
-                            <td> {{ track.to_simple_json().get('artists') }} </td>
-                            <td> {{ track.to_simple_json().get('album_name') }} </td>
-                            <td> {{ track.to_simple_json().get('popularity') }} </td>
+                            <td class="track-title"> {{ track.to_simple_json().get('name') }} </td>
+                            <td class="track-artists"> {{ track.to_simple_json().get('artists') }} </td>
+                            <td class="track-album"> {{ track.to_simple_json().get('album_name') }} </td>
+                            <td class="track-pop"> {{ track.to_simple_json().get('popularity') }} </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -62,7 +72,7 @@
     </div>
     <div class="col s-3">
         <div>
-            <h1>Mean Stats</h1>
+            <h1><center>Mean Stats</center></h1>
         </div>
         <div id = 'info-chart'>
             <canvas id = 'chart' width = '300' height = '300'></canvas>

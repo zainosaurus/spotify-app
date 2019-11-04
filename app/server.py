@@ -106,9 +106,11 @@ def song_info(spotify_id):
 def my_library():
     library = current_user.get_library()
     library.perform_audio_analysis()
+    library_stats = library.mean_vals_chart()
     return render_template('library.html',
         saved_tracks = library.saved_tracks,
-        chart_data = library.mean_vals_chart()
+        chart_labels = library_stats.get('labels'),
+        chart_data = library_stats.get('data')
     )
 
 # Filter user's library
