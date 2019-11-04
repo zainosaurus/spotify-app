@@ -3,9 +3,11 @@
 {% block head %}
     {{ super() }}
     <script src="{{ url_for('static', filename = 'js/clickable_table_rows.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <script src="{{ url_for('static', filename = 'js/song_analysis_chart.js') }}"></script>
     <style>
         #title {
-            display: inline-block;
+            display: block;
             vertical-align: middle;
         }
         #filter-form {
@@ -13,18 +15,17 @@
             padding-top: 1.5em;
             vertical-align: middle;
         }
+        #song-list {
+            display: inline-block;
+        }
+        #info-chart {
+            display: inline-block;
+            vertical-align: top;
+        }
     </style>
     <script>
         $(document).ready(function() {
-            alert("Page is Ready;");
-            $('#query-form').submit(function() {
-                alert("Submitting Form; {{ saved_tracks|length }} tracks.");
-                $.ajax({
-                    url: "{{ url_for('filter_library') }}",
-                    data: {'query_str': $('input[name="query_str"]').val()},
-                    type: "POST"
-                });
-            });
+            createChart({{ chart_data['labels'] | safe }}, {{ chart_data['data'] }});
         });
     </script>
 {% endblock %}
@@ -32,39 +33,39 @@
 {% block title %} My Library {% endblock %}
 
 {% block content %}
-    <div id='title'>
-        <h1> My Library </h1>
-    </div>
-    <div id='filter-form'>
-        <form method="POST" id='query-form' action="">
-            <label name='query_str'> Filter: </label>
-            <input type='text' autocomplete='off' name='query_str'>
-            <input type='submit' value='Filter'>
-            {% for track in saved_tracks %}
-                <input type="hidden" name="tracks[]" value="{{ track.to_simple_json().get('id') }}">
-            {% endfor %}
-        </form>
-    </div>
-    <div class='song-list'>
-        <table>
-            <thead>
-                <tr>
-                    <th> Name </th>
-                    <th> Artist </th>
-                    <th> Album </th>
-                    <th> Popularity </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for track in saved_tracks %}
-                    <tr class='clickable-row' data-href="{{ url_for('song_info', spotify_id=track.to_simple_json().get('id')) }}" data-info="{{ track.to_simple_json() }}">
-                        <td class='song-title'> {{ track.to_simple_json().get('name') }} </td>
-                        <td> {{ track.to_simple_json().get('artists') }} </td>
-                        <td> {{ track.to_simple_json().get('album_name') }} </td>
-                        <td> {{ track.to_simple_json().get('popularity') }} </td>
+    <div class="col s-9">
+        <div id='title'>
+            <h1> My Library </h1>
+        </div>
+        <div id='song-list'>
+            <table>
+                <thead>
+                    <tr>
+                        <th> Name </th>
+                        <th> Artist </th>
+                        <th> Album </th>
+                        <th> Popularity </th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for track in saved_tracks %}
+                        <tr class='clickable-row' data-href="{{ url_for('song_info', spotify_id=track.to_simple_json().get('id')) }}" data-info="{{ track.to_simple_json() }}">
+                            <td class='song-title'> {{ track.to_simple_json().get('name') }} </td>
+                            <td> {{ track.to_simple_json().get('artists') }} </td>
+                            <td> {{ track.to_simple_json().get('album_name') }} </td>
+                            <td> {{ track.to_simple_json().get('popularity') }} </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col s-3">
+        <div>
+            <h1>Mean Stats</h1>
+        </div>
+        <div id = 'info-chart'>
+            <canvas id = 'chart' width = '300' height = '300'></canvas>
+        </div>
     </div>
 {% endblock %}

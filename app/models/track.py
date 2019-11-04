@@ -1,6 +1,7 @@
 import spotify.api
 import spotify.utils
 import query_builder
+import statistics
 
 class Track:
     """ Represents a Spotify Track Object """
@@ -9,6 +10,7 @@ class Track:
     # List of keys to filter by when getting simple json
     TRACK_KEYS = ['name', 'album:name', 'artists', 'popularity', 'id']
     AUDIO_FEATURE_KEYS = ['danceability', 'energy', 'valence', 'tempo', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'speechiness']
+    CHART_LABELS = ['danceability', 'energy', 'valence', 'instrumentalness', 'speechiness', 'acousticness']
 
     @staticmethod
     def find_by_query(auth_token, search_query):
@@ -42,11 +44,10 @@ class Track:
     # Returns values to plot
     #   danceability, energy, valence
     def data_points(self):
-        labels = ['danceability', 'energy', 'valence', 'instrumentalness', 'speechiness', 'acousticness']
         data = []
-        for label in labels:
+        for label in Track.CHART_LABELS:
             data.append(self.audio_features[label])
-        return {'labels': labels, 'data': data}
+        return {'labels': Track.CHART_LABELS, 'data': data}
 
     # Gets a value
     def get_val(self, key):
@@ -88,6 +89,22 @@ class TrackCollection:
             # Updating track objects with info
             for i in range(len(response_objects['audio_features'])):
                 current_batch[i].audio_features = response_objects['audio_features'][i]
+
+    # Returns list of values from saved tracks (uses "get_val" function in the Track class)
+    def get_vals(self, key):
+        return list(map(lambda x: x.get_val(key), self.saved_tracks))
+
+    # Returns mean of given value from saved tracks
+    def mean_val(self, key):
+        return statistics.mean(self.get_vals(key))
+
+    # Gets mean values of saved tracks (keys are according to CHART_LABELS in the Track Class)
+    # Returns json for displaying in a chart -> {labels: [list of labels], data: [corresponding data points to chart]} 
+    def mean_vals_chart(self):
+        data = []
+        for label in Track.CHART_LABELS:
+            data.append(self.mean_val(label))
+        return {'labels': Track.CHART_LABELS, 'data': data}
 
     # Filters the library based on a query (returns list of SavedTracks that match the query)
     def filter_by_query(self, query):

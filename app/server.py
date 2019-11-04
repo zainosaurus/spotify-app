@@ -69,7 +69,7 @@ def spotify_auth_landing():
     else:
         return json.dumps({'error': 'Invalid Authenticity Key'}), 401
 
-@app.route('/profile', methods = ['GET'])
+@app.route('/profile', methods=['GET'])
 @login_required
 def my_profile():
     profile = current_user.get_profile()
@@ -87,7 +87,7 @@ def song_search():
 # Returns song analysis data
 # required parameters:
 #   spotify_id: Spotify ID of the track to display
-@app.route('/track/<string:spotify_id>', methods=['GET'])
+@app.route('/track/<string:spotify_id>', methods = ['GET'])
 @login_required
 def song_info(spotify_id):
     track = Track.find_by_id(current_user.get_access_token(), spotify_id)
@@ -106,7 +106,10 @@ def song_info(spotify_id):
 def my_library():
     library = current_user.get_library()
     library.perform_audio_analysis()
-    return render_template('library.html', saved_tracks = library.saved_tracks)
+    return render_template('library.html',
+        saved_tracks = library.saved_tracks,
+        chart_data = library.mean_vals_chart()
+    )
 
 # Filter user's library
 # params: query_str (user-entered query)
